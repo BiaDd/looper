@@ -18,8 +18,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var recyclerview : RecyclerView
-    private lateinit var bucketList : ArrayList<ItemsViewModel>
-    private lateinit var bucketListAdapter : CustomAdapter
+    private lateinit var trackList : ArrayList<TrackModel>
+    private lateinit var trackListAdapter : CustomAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,37 +32,31 @@ class MainActivity : AppCompatActivity() {
         // this creates a vertical layout Manager
         recyclerview.layoutManager = LinearLayoutManager(this)
 
-        bucketList = ArrayList()
-        bucketList.add(ItemsViewModel("Go to a basketball game","2022/08/03", "Uncompleted", false ))
-        bucketList.add(ItemsViewModel("Drink every Starbucks drink","2022/01/24", "2022/03/08", true ))
-        bucketList.add(ItemsViewModel("Play minecraft","2022/03/24", "2022/03/20", true ))
-        bucketList.add(ItemsViewModel("Graduate","2023/05/06", "Uncompleted", false ))
+        trackList = ArrayList()
 
-        bucketList.sortWith(compareBy<ItemsViewModel> {it.completed}.thenBy { it.completedDate }.thenBy { it.dueDate })
-        //bucketList.sortBy { it.dueDate }
 
         // This will pass the ArrayList to our Adapter
-        bucketListAdapter = CustomAdapter(bucketList)
+        trackListAdapter = CustomAdapter(trackList)
 
         // Setting the Adapter with the recyclerview
-        recyclerview.adapter = bucketListAdapter
+        recyclerview.adapter = trackListAdapter
 
-        bucketListAdapter.onItemClick = {
-            val intent = Intent(this@MainActivity, DetailsActivity::class.java)
-            intent.putExtra("bucketItem", it)
-            intent.putExtra("itemIndex", bucketList.indexOf(it))
-            editItemActivity.launch(intent)
-        }
+//        trackListAdapter.onItemClick = {
+//            val intent = Intent(this@MainActivity, DetailsActivity::class.java)
+//            intent.putExtra("bucketItem", it)
+//            intent.putExtra("itemIndex", bucketList.indexOf(it))
+//            editItemActivity.launch(intent)
+//        }
 
         // fab
-        val mAddFab = findViewById<FloatingActionButton>(R.id.add_fab)
-
-        mAddFab.setOnClickListener {
-            val intent = Intent(this@MainActivity, InsertListItem::class.java)
-            addItemActivity.launch(intent)
-            //startActivity(intent)
-
-        }
+//        val mAddFab = findViewById<FloatingActionButton>(R.id.add_fab)
+//
+//        mAddFab.setOnClickListener {
+//            val intent = Intent(this@MainActivity, InsertListItem::class.java)
+//            addItemActivity.launch(intent)
+//            //startActivity(intent)
+//
+//        }
     }
 
 
