@@ -13,6 +13,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 import kotlin.collections.ArrayList
 
+// add a record button
+// add a play button
+// add tracks
+// let to play or record track seperately
+
+// later allow to click on track and edit tracks by clipping
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,22 +48,7 @@ class MainActivity : AppCompatActivity() {
         // Setting the Adapter with the recyclerview
         recyclerview.adapter = trackListAdapter
 
-//        trackListAdapter.onItemClick = {
-//            val intent = Intent(this@MainActivity, DetailsActivity::class.java)
-//            intent.putExtra("bucketItem", it)
-//            intent.putExtra("itemIndex", bucketList.indexOf(it))
-//            editItemActivity.launch(intent)
-//        }
 
-        // fab
-//        val mAddFab = findViewById<FloatingActionButton>(R.id.add_fab)
-//
-//        mAddFab.setOnClickListener {
-//            val intent = Intent(this@MainActivity, InsertListItem::class.java)
-//            addItemActivity.launch(intent)
-//            //startActivity(intent)
-//
-//        }
     }
 
 
