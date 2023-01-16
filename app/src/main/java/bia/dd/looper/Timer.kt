@@ -9,7 +9,6 @@ class Timer(listener:OnTimerTickListener) {
     interface OnTimerTickListener {
         fun onTimerTick(duration:String)
     }
-
     private var handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 

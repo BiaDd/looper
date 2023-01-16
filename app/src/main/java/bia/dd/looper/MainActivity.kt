@@ -16,6 +16,7 @@ import android.media.MediaRecorder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.provider.MediaStore
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 //    private lateinit var trackList : ArrayList<TrackModel>
 //    private lateinit var trackListAdapter : CustomAdapter
 
+    private lateinit var amplitudes : ArrayList<Float>
     private var permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private var permissionGranted = false
 
@@ -95,6 +98,21 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         }
 
+        btnList.setOnClickListener() {
+
+        }
+
+        btnDone.setOnClickListener() {
+            stopRecorder()
+            // TODO
+        }
+
+        btnDelete.setOnClickListener() {
+            stopRecorder()
+            File("$dirPath$filename.mp3")
+        }
+
+        btnDelete.isClickable = false
 
     }
 
@@ -156,14 +174,40 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         isRecording = true
         isPaused = false
         timer.start()
+
+        btnDelete.isClickable = true
+        btnDelete.setImageResource(R.drawable.ic_delete)
+
+        btnList.visibility = View.GONE
+        btnDone.visibility = View.VISIBLE
     }
 
     private fun stopRecorder() {
         timer.stop()
+        // stop recorder
+        recorder.apply() {
+            stop()
+            release()
+        }
+        isPaused=false
+        isRecording=false
+
+        btnList.visibility = View.VISIBLE
+        btnDone.visibility = View.GONE
+
+        btnDelete.isClickable = false
+        btnDelete.setImageResource(R.drawable.ic_delete_disabled)
+
+        btnRecord.setImageResource(R.drawable.ic_record)
+
+        tvTimer.text ="00:00:00"
+        amplitudes = waveFormView.clear()
+
     }
 
     override fun onTimerTick(duration: String) {
         tvTimer.text = duration
+        waveFormView.addAmplitude(recorder.maxAmplitude.toFloat())
     }
 
 

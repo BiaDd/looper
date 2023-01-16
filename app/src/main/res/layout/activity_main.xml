@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="@id/waveFormView"
         android:layout_marginBottom="30dp"/>
 
-    <bia.dd.looper.WaveFormVIew
+    <bia.dd.looper.WaveFormView
         android:id="@+id/waveFormView"
         android:layout_width="match_parent"
         android:layout_height="400px"
@@ -44,7 +44,6 @@
         <ImageButton
             android:id="@+id/btnRecord"
             android:layout_width="66dp"
-            android:src="@drawable/ic_delete_disabled"
             android:background="@drawable/ic_record"
             android:layout_height="66dp"
             android:layout_marginStart="30dp"
