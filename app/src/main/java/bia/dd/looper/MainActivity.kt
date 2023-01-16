@@ -9,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.MediaStore
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,7 +37,7 @@ import kotlin.collections.ArrayList
 
 const val REQUEST_CODE = 200
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
 
 //    private lateinit var recyclerview : RecyclerView
@@ -50,6 +53,9 @@ class MainActivity : AppCompatActivity() {
     private var isRecording = false
     private var isPaused = false
 
+    private lateinit var timer : Timer
+
+    private lateinit var vibrator : Vibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +82,8 @@ class MainActivity : AppCompatActivity() {
 //        // Setting the Adapter with the recyclerview
 //        recyclerview.adapter = trackListAdapter
 
-
+        timer = Timer(this)
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         btnRecord.setOnClickListener {
             when {
@@ -84,6 +91,8 @@ class MainActivity : AppCompatActivity() {
                 isRecording->pauseRecorder()
                 else->startRecording()
             }
+
+            vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
         }
 
 
@@ -104,6 +113,7 @@ class MainActivity : AppCompatActivity() {
         recorder.pause()
         isPaused = true
         btnRecord.setImageResource(R.drawable.ic_record)
+        timer.pause()
 
     }
 
@@ -111,6 +121,7 @@ class MainActivity : AppCompatActivity() {
         recorder.resume()
         isPaused = false
         btnRecord.setImageResource(R.drawable.ic_pause)
+        timer.start()
     }
 
     private fun startRecording() {
@@ -144,10 +155,15 @@ class MainActivity : AppCompatActivity() {
         btnRecord.setImageResource(R.drawable.ic_pause)
         isRecording = true
         isPaused = false
+        timer.start()
     }
 
-    fun addTrack() {
+    private fun stopRecorder() {
+        timer.stop()
+    }
 
+    override fun onTimerTick(duration: String) {
+        tvTimer.text = duration
     }
 
 
