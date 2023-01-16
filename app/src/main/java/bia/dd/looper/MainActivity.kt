@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     private var isRecording = false
     private var isPaused = false
 
-    //private var btnRecord = findViewById<FloatingActionButton>(R.id.record_button)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,13 +78,13 @@ class MainActivity : AppCompatActivity() {
 
 
 
-//        btnRecord.setOnClickListener {
-//            when {
-//                isPaused->resumeRecorder()
-//                isRecording->pauseRecorder()
-//                else->startRecording()
-//            }
-//        }
+        btnRecord.setOnClickListener {
+            when {
+                isPaused->resumeRecorder()
+                isRecording->pauseRecorder()
+                else->startRecording()
+            }
+        }
 
 
     }
@@ -100,53 +100,51 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun pauseRecorder() {
-//        recorder.pause()
-//        isPaused = true
-//        btnRecord.setImageResource(R.drawable.ic_record)
-//
-//    }
-//
-//    private fun resumeRecorder() {
-//        recorder.resume()
-//        isPaused = false
-//        btnRecord.setImageResource(R.drawable.ic_pause)
-//    }
-//
-//    private fun startRecording() {
-//        if(!permissionGranted) {
-//            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE)
-//            return
-//        }
-//        // else start recording
-//        recorder = MediaRecorder()
-//        dirPath = "${externalCacheDir?.absolutePath}/"
-//
-//        var simpleDateFormat = SimpleDateFormat("yyyy.MM.DD_hh.mm.ss")
-//        var date : String = simpleDateFormat.format(Date())
-//        filename = "audio_record_$date"
-//
-//        recorder.apply {
-//            setAudioSource(MediaRecorder.AudioSource.MIC)
-//            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-//            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-//            setOutputFile("$dirPath$filename.mp3")
-//
-//            try {
-//                prepare()
-//            }
-//            catch (e:IOException){
-//
-//            }
-//            start()
-//        }
-//
-//        btnRecord.setImageResource(R.drawable.ic_pause)
-//        isRecording = true
-//        isPaused = false
-//
-//
-//    }
+    private fun pauseRecorder() {
+        recorder.pause()
+        isPaused = true
+        btnRecord.setImageResource(R.drawable.ic_record)
+
+    }
+
+    private fun resumeRecorder() {
+        recorder.resume()
+        isPaused = false
+        btnRecord.setImageResource(R.drawable.ic_pause)
+    }
+
+    private fun startRecording() {
+        if(!permissionGranted) {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE)
+            return
+        }
+        // else start recording
+        recorder = MediaRecorder()
+        dirPath = "${externalCacheDir?.absolutePath}/"
+
+        var simpleDateFormat = SimpleDateFormat("yyyy.MM.DD_hh.mm.ss")
+        var date : String = simpleDateFormat.format(Date())
+        filename = "audio_record_$date"
+
+        recorder.apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFile("$dirPath$filename.mp3")
+
+            try {
+                prepare()
+            }
+            catch (e:IOException){
+
+            }
+            start()
+        }
+
+        btnRecord.setImageResource(R.drawable.ic_pause)
+        isRecording = true
+        isPaused = false
+    }
 
     fun addTrack() {
 
