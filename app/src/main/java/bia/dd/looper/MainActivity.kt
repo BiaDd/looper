@@ -6,24 +6,27 @@ package bia.dd.looper
 
 import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.provider.MediaStore
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -60,6 +63,8 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
     private lateinit var vibrator : Vibrator
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -88,6 +93,10 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         timer = Timer(this)
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.peekHeight = 0
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
         btnRecord.setOnClickListener {
             when {
                 isPaused->resumeRecorder()
@@ -104,12 +113,29 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
         btnDone.setOnClickListener() {
             stopRecorder()
-            // TODO
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBG.visibility = View.VISIBLE
+            filenameinput.setText(filename)
+        }
+
+        btnCancel.setOnClickListener() {
+            File("$dirPath$filename.mp3").delete()
+            dismiss()
+        }
+
+        btnOk.setOnClickListener() {
+            save()
+            dismiss()
+        }
+
+        bottomSheetBG.setOnClickListener() {
+            File("$dirPath$filename.mp3").delete()
+            dismiss()
         }
 
         btnDelete.setOnClickListener() {
             stopRecorder()
-            File("$dirPath$filename.mp3")
+            File("$dirPath$filename.mp3").delete()
         }
 
         btnDelete.isClickable = false
@@ -125,6 +151,28 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
         if (requestCode == REQUEST_CODE) {
             permissionGranted = grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
+    }
+
+    private fun save() {
+        val newFilename = filenameinput.text.toString()
+        if (newFilename != filename) {
+            var newFile = File("$dirPath$newFilename.mp3")
+            File("$dirPath$filename.mp3").renameTo(newFile)
+        }
+    }
+
+    private fun hideKeyboard(view : View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken,0)
+    }
+
+    private fun dismiss() {
+        bottomSheetBG.visibility = View.GONE
+        hideKeyboard(filenameinput)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }, 100)
     }
 
     private fun pauseRecorder() {

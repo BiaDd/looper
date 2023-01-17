@@ -66,7 +66,7 @@
                 android:id="@+id/btnDone"
                 android:visibility="gone"
                 android:layout_width="@dimen/btn_size"
-                android:src="@drawable/ic_delete_disabled"
+                android:src="@drawable/ic_done"
                 android:background="@drawable/ic_ripple"
                 android:layout_height="@dimen/btn_size"
                 />
@@ -77,6 +77,7 @@
 
     <View
         android:id="@+id/bottomSheetBG"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/opaqueBG"/>
