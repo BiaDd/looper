@@ -22,13 +22,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -61,6 +66,10 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
     private lateinit var timer : Timer
 
+    private lateinit var duration : String
+
+    private lateinit var db : AppDatabase
+
     private lateinit var vibrator : Vibrator
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -75,6 +84,11 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE)
         }
 
+        db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java,
+            "audioRecords"
+        ).build()
 
 //        // getting the recyclerview by its id
 //        recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
@@ -159,6 +173,26 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
             var newFile = File("$dirPath$newFilename.mp3")
             File("$dirPath$filename.mp3").renameTo(newFile)
         }
+
+        val filePath = "$dirPath$newFilename.mp3"
+        val timeStamp = Date().time
+        val ampsPath = "$dirPath$newFilename"
+
+        try {
+            val fos = FileOutputStream(ampsPath)
+            val out = ObjectOutputStream(fos)
+            out.writeObject(amplitudes)
+            fos.close()
+            out.close()
+        } catch (e : IOException) {
+
+        }
+        val record = AudioRecord(newFilename, filePath, timeStamp, duration, ampsPath)
+
+        GlobalScope.launch {
+            db.audioRecordDao().insert(record)
+        }
+
     }
 
     private fun hideKeyboard(view : View) {
@@ -255,6 +289,7 @@ class MainActivity : AppCompatActivity(), Timer.OnTimerTickListener {
 
     override fun onTimerTick(duration: String) {
         tvTimer.text = duration
+        this.duration = duration.dropLast(3)
         waveFormView.addAmplitude(recorder.maxAmplitude.toFloat())
     }
 
